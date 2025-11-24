@@ -3,8 +3,33 @@ import { StudyContent } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
+const fetchImage = async (subject: string, topic: string): Promise<string | undefined> => {
+  try {
+    const searchUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrsearch=${encodeURIComponent(subject + " " + topic + " diagram")}&gsrlimit=1&prop=imageinfo&iiprop=url&format=json&origin=*`;
+    const imageRes = await fetch(searchUrl);
+    const imageData = await imageRes.json();
+    
+    if (imageData.query && imageData.query.pages) {
+      const pages = Object.values(imageData.query.pages);
+      if (pages.length > 0) {
+        // @ts-ignore
+        const imageInfo = pages[0].imageinfo;
+        if (imageInfo && imageInfo.length > 0) {
+          return imageInfo[0].url;
+        }
+      }
+    }
+  } catch (imgError) {
+    console.warn("Failed to fetch image from Wikimedia:", imgError);
+  }
+  return undefined;
+};
+
 export const fetchExplanation = async (subject: string, topic: string): Promise<StudyContent> => {
   try {
+    // Start image fetch immediately (non-blocking)
+    const imagePromise = fetchImage(subject, topic);
+
     const prompt = `
       You are an expert high school tutor specializing in the Grade 12 curriculum. 
       Please provide a clear, concise, and educational explanation for the topic: "${topic}" 
@@ -16,7 +41,8 @@ export const fetchExplanation = async (subject: string, topic: string): Promise<
       3. Example: A short, concise practical example (maximum 2-3 sentences) with brief explanation.
     `;
 
-    const response = await ai.models.generateContent({
+    // Start AI generation
+    const aiPromise = ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {
@@ -51,22 +77,27 @@ export const fetchExplanation = async (subject: string, topic: string): Promise<
               required: ["title", "content"],
               description: "A practical example illustrating the concept.",
             },
-            imageUrl: {
-              type: Type.STRING,
-              description: "A simple educational diagram or illustration URL related to the topic.",
-            },
           },
           required: ["definition", "keyPoints", "example"],
         },
       },
     });
 
+    // Wait for both to complete
+    const [response, imageUrl] = await Promise.all([aiPromise, imagePromise]);
+
     const text = response.text;
     if (!text) {
       throw new Error("No response from AI");
     }
 
-    return JSON.parse(text) as StudyContent;
+    const parsedData = JSON.parse(text) as StudyContent;
+    
+    if (imageUrl) {
+      parsedData.imageUrl = imageUrl;
+    }
+    
+    return parsedData;
   } catch (error) {
     console.error("Error fetching explanation:", error);
     throw error;

@@ -74,6 +74,29 @@ export const ResultView: React.FC<ResultViewProps> = ({ data, topic, onReset }) 
             </p>
           </div>
         </div>
+        
+        {/* Image Card */}
+        {data.imageUrl && (
+          <div className="md:col-span-2 glass-panel p-6 rounded-3xl shadow-sm border border-slate-200/60 bg-white/80">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-indigo-100 rounded-lg text-indigo-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+              </div>
+              <h3 className="text-xl font-bold text-slate-800">Visual Aid</h3>
+            </div>
+            <div className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+              <img 
+                src={data.imageUrl} 
+                alt={`Illustration for ${topic}`}
+                className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="flex items-center justify-center h-full text-slate-400 italic">Image not available</div>';
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
