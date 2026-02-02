@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SubjectCard } from './components/SubjectCard';
 import { ResultView } from './components/ResultView';
 import { SUBJECTS } from './constants';
@@ -11,6 +11,23 @@ function App() {
   const [loadingState, setLoadingState] = useState<LoadingState>('idle');
   const [result, setResult] = useState<StudyContent | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isDark, setIsDark] = useState(false);
+
+  // Initialize Dark Mode
+  useEffect(() => {
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setIsDark(true);
+    }
+  }, []);
+
+  // Toggle Dark Mode Class
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,20 +70,32 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-brand-200 selection:text-brand-900">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-200 font-sans selection:bg-brand-200 selection:text-brand-900 transition-colors duration-300">
       
-      {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 glass-panel border-b border-white/40">
+      <nav className="fixed top-0 w-full z-50 glass-panel border-b border-white/40 dark:border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-500 to-brand-300 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-500/30">
                 S
               </div>
-              <span className="font-bold text-xl tracking-tight text-slate-800">ScholarSync</span>
+              <span className="font-bold text-xl tracking-tight text-slate-800 dark:text-slate-100">ScholarSync</span>
             </div>
-            <div className="text-xs font-semibold px-3 py-1 bg-slate-100 rounded-full text-slate-500 uppercase tracking-wider">
-              Grade 12 Beta
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setIsDark(!isDark)}
+                className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors"
+                aria-label="Toggle Dark Mode"
+              >
+                {isDark ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                )}
+              </button>
+              <div className="text-xs font-semibold px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                Grade 12 Beta
+              </div>
             </div>
           </div>
         </div>
@@ -77,18 +106,18 @@ function App() {
         {/* Intro / Search Section */}
         <div className="transition-all duration-700 ease-in-out">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
               Master any topic <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600 dark:from-brand-400 dark:to-indigo-400">
                 in seconds.
               </span>
             </h1>
-            <p className="text-lg text-slate-600">
+            <p className="text-lg text-slate-600 dark:text-slate-400">
               Select your subject, enter a topic, and get instant, structured definitions, key points, and examples tailored for 12th grade.
             </p>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-6 md:p-8 border border-slate-100 max-w-4xl mx-auto relative overflow-hidden">
+          <div className="glass-panel rounded-3xl p-6 md:p-8 max-w-4xl mx-auto relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-brand-500/10">
              {/* Decorative blob */}
             <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-brand-50 opacity-50 blur-3xl pointer-events-none"></div>
 
@@ -96,7 +125,7 @@ function App() {
               
               {/* Subject Selection */}
               <div className="space-y-3">
-                <label className="block text-sm font-semibold text-slate-700 uppercase tracking-wider">1. Select Subject</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">1. Select Subject</label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                   {SUBJECTS.map((subject) => (
                     <SubjectCard
@@ -111,7 +140,7 @@ function App() {
 
               {/* Topic Input */}
               <div className="space-y-3">
-                <label htmlFor="topic" className="block text-sm font-semibold text-slate-700 uppercase tracking-wider">2. Enter Topic</label>
+                <label htmlFor="topic" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">2. Enter Topic</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -119,7 +148,7 @@ function App() {
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
                     placeholder="  Enter & Explore a topic in a flash   "
-                    className="block w-full rounded-xl border-slate-200 pl-4 pr-12 py-4 text-lg bg-slate-50 focus:bg-white focus:border-brand-500 focus:ring-brand-500 transition-all shadow-sm placeholder:text-slate-400"
+                    className="block w-full rounded-xl border-slate-200 dark:border-slate-700 pl-4 pr-12 py-4 text-lg bg-slate-50 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-900 focus:border-brand-500 focus:ring-brand-500 transition-all shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-white"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -161,7 +190,7 @@ function App() {
                   <button
                     type="button"
                     onClick={handleReset}
-                    className="w-full py-3 px-6 rounded-xl font-medium text-lg text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all duration-200"
+                    className="w-full py-3 px-6 rounded-xl font-medium text-lg text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-200"
                   >
                     New Topic
                   </button>

@@ -15,9 +15,10 @@ export const SubjectCard: React.FC<SubjectCardProps> = ({ subject, isSelected, o
       className={`
         relative flex flex-col items-center justify-center p-4 rounded-xl transition-all duration-300 border
         ${isSelected 
-          ? `ring-2 ring-offset-2 ring-brand-500 scale-105 shadow-md ${subject.color}` 
-          : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50 hover:border-slate-300'
+          ? `ring-2 ring-offset-2 ring-brand-500 scale-105 shadow-xl ${subject.color}` 
+          : 'bg-white/60 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:border-brand-200 dark:hover:border-brand-500/30 hover:-translate-y-1 hover:shadow-lg hover:text-brand-600 dark:hover:text-brand-300'
         }
+        active:scale-95
       `}
     >
       <span className="text-3xl mb-2 filter drop-shadow-sm">{subject.icon}</span>
