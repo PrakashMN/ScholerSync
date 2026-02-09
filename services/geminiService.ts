@@ -1,7 +1,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { StudyContent } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const getAIClient = () => {
+  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("API Key not found. Please check your configuration.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 const fetchImage = async (subject: string, topic: string): Promise<string | undefined> => {
   try {
@@ -27,6 +33,9 @@ const fetchImage = async (subject: string, topic: string): Promise<string | unde
 
 export const fetchExplanation = async (subject: string, topic: string): Promise<StudyContent> => {
   try {
+    // Initialize AI client lazily
+    const ai = getAIClient();
+
     // Start image fetch immediately (non-blocking)
     const imagePromise = fetchImage(subject, topic);
 
@@ -87,6 +96,7 @@ export const fetchExplanation = async (subject: string, topic: string): Promise<
     const [response, imageUrl] = await Promise.all([aiPromise, imagePromise]);
 
     const text = response.text;
+    
     if (!text) {
       throw new Error("No response from AI");
     }
