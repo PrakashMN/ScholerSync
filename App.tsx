@@ -14,11 +14,7 @@ function App() {
   const [isDark, setIsDark] = useState(false);
 
   // Initialize Dark Mode
-  useEffect(() => {
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setIsDark(true);
-    }
-  }, []);
+
 
   // Toggle Dark Mode Class
   useEffect(() => {
