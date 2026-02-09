@@ -4,6 +4,50 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ScholarSync - Grade 12 Study Companion</title>
+    <!-- DEBUG SCRIPT: Print errors to screen -->
+    <script>
+      window.addEventListener('error', function(event) {
+        var errorDisplay = document.getElementById('error-display');
+        if (!errorDisplay) {
+          errorDisplay = document.createElement('div');
+          errorDisplay.id = 'error-display';
+          errorDisplay.style.position = 'fixed';
+          errorDisplay.style.top = '0';
+          errorDisplay.style.left = '0';
+          errorDisplay.style.width = '100%';
+          errorDisplay.style.backgroundColor = '#fae8e8'; // Light red
+          errorDisplay.style.color = '#c53030'; // Dark red
+          errorDisplay.style.padding = '20px';
+          errorDisplay.style.zIndex = '9999';
+          errorDisplay.style.fontFamily = 'monospace';
+          errorDisplay.style.whiteSpace = 'pre-wrap';
+          errorDisplay.style.borderBottom = '1px solid #e53e3e';
+          document.body.appendChild(errorDisplay);
+        }
+        errorDisplay.innerText += 'Global Error: ' + (event.message || event) + '\n';
+      });
+
+      window.addEventListener('unhandledrejection', function(event) {
+        var errorDisplay = document.getElementById('error-display');
+        if (!errorDisplay) {
+          errorDisplay = document.createElement('div');
+          errorDisplay.id = 'error-display';
+          errorDisplay.style.position = 'fixed';
+          errorDisplay.style.top = '0';
+          errorDisplay.style.left = '0';
+          errorDisplay.style.width = '100%';
+          errorDisplay.style.backgroundColor = '#fae8e8';
+          errorDisplay.style.color = '#c53030';
+          errorDisplay.style.padding = '20px';
+          errorDisplay.style.zIndex = '9999';
+          errorDisplay.style.fontFamily = 'monospace';
+          errorDisplay.style.whiteSpace = 'pre-wrap';
+          errorDisplay.style.borderBottom = '1px solid #e53e3e';
+          document.body.appendChild(errorDisplay);
+        }
+        errorDisplay.innerText += 'Unhandled Promise Rejection: ' + (event.reason ? event.reason.toString() : event) + '\n';
+      });
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
